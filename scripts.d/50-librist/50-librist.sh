@@ -1,15 +1,13 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://code.videolan.org/rist/librist.git"
-SCRIPT_COMMIT="8fc343a3bc12a3f631d7f38c817604328b7ec7e1"
+SCRIPT_COMMIT="fdd3d0c82f069406e74889e408930d179281e1e6"
 
 ffbuild_enabled() {
     return 0
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
-
     mkdir build && cd build
 
     local myconf=(
@@ -40,11 +38,6 @@ ffbuild_dockerbuild() {
     meson "${myconf[@]}" ..
     ninja -j"$(nproc)"
     ninja install
-
-    if [[ $TARGET == win* ]]; then
-        # This works around mbedtls not having pkg-config, while recently having added a new dependency.
-        echo "Libs.private: -lbcrypt -lws2_32" >> "$FFBUILD_PREFIX"/lib/pkgconfig/librist.pc
-    fi
 }
 
 ffbuild_configure() {

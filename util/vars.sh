@@ -37,31 +37,47 @@ BASE_IMAGE="${REGISTRY}/${REPO}/base:latest"
 TARGET_IMAGE="${REGISTRY}/${REPO}/base-${TARGET}:latest"
 IMAGE="${REGISTRY}/${REPO}/${TARGET}-${VARIANT}${ADDINS_STR:+-}${ADDINS_STR}:latest"
 
-DL_IMAGE_RAW="${REGISTRY}/${REPO}/dl_cache"
-if [[ -n "$REGISTRY_OVERRIDE_DL" && -n "$GITHUB_REPOSITORY_DL" ]]; then
-    DL_IMAGE_RAW="${REGISTRY_OVERRIDE_DL}/${GITHUB_REPOSITORY_DL}/dl_cache"
-    DL_IMAGE_RAW="${DL_IMAGE_RAW,,}"
-fi
-DL_IMAGE="${DL_IMAGE_RAW}:unset"
-
-ffbuild_dockerdl() {
-    default_dl "$SELF"
+ffbuild_ffver() {
+    case "$ADDINS_STR" in
+    *4.4*)
+        echo 404
+        ;;
+    *5.0*)
+        echo 500
+        ;;
+    *5.1*)
+        echo 501
+        ;;
+    *6.0*)
+        echo 600
+        ;;
+    *6.1*)
+        echo 601
+        ;;
+    *7.0*)
+        echo 700
+        ;;
+    *)
+        echo 99999999
+        ;;
+    esac
 }
 
-ffbuild_dockerlayer_dl() {
-    to_df "COPY --from=${SELFLAYER} \$FFBUILD_DLDIR/. \$FFBUILD_DLDIR"
-}
 
 ffbuild_dockerstage() {
-    to_df "RUN --mount=src=${SELF},dst=/stage.sh --mount=src=/,dst=\$FFBUILD_DLDIR,from=${DL_IMAGE},rw run_stage /stage.sh"
+    if [[ -n "$SELFCACHE" ]]; then
+        to_df "RUN --mount=src=${SELF},dst=/stage.sh --mount=src=${SELFCACHE},dst=/cache.tar.xz run_stage /stage.sh"
+    else
+        to_df "RUN --mount=src=${SELF},dst=/stage.sh run_stage /stage.sh"
+    fi
 }
 
 ffbuild_dockerlayer() {
-    to_df "COPY --from=${SELFLAYER} \$FFBUILD_PREFIX/. \$FFBUILD_PREFIX"
+    to_df "COPY --link --from=${SELFLAYER} \$FFBUILD_PREFIX/. \$FFBUILD_PREFIX"
 }
 
 ffbuild_dockerfinal() {
-    to_df "COPY --from=${PREVLAYER} \$FFBUILD_PREFIX/. \$FFBUILD_PREFIX"
+    to_df "COPY --link --from=${PREVLAYER} \$FFBUILD_PREFIX/. \$FFBUILD_PREFIX"
 }
 
 ffbuild_configure() {

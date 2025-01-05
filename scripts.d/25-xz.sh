@@ -1,15 +1,13 @@
 #!/bin/bash
 
-SCRIPT_REPO="https://github.com/xz-mirror/xz.git"
-SCRIPT_COMMIT="74c3449d8b816a724b12ebce7417e00fb597309a"
+SCRIPT_REPO="https://github.com/tukaani-project/xz.git"
+SCRIPT_COMMIT="ea21c76aa2406ba06ac154fe57741734c04f260f"
 
 ffbuild_enabled() {
     return 0
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
-
     ./autogen.sh --no-po4a --no-doxygen
 
     local myconf=(

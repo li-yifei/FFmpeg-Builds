@@ -1,15 +1,14 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://chromium.googlesource.com/webm/libvpx"
-SCRIPT_COMMIT="974c14578ca3a2ee411ef1dbf0e55ca2c33da036"
+SCRIPT_COMMIT="8058a0b54991257a0e1a2fcf08d993a8b70c1d3a"
 
 ffbuild_enabled() {
+    [[ $TARGET == winarm64 ]] && return -1
     return 0
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
-
     local myconf=(
         --disable-shared
         --enable-static
@@ -30,6 +29,11 @@ ffbuild_dockerbuild() {
     elif [[ $TARGET == win32 ]]; then
         myconf+=(
             --target=x86-win32-gcc
+        )
+        export CROSS="$FFBUILD_CROSS_PREFIX"
+    elif [[ $TARGET == winarm64 ]]; then
+        myconf+=(
+            --target=arm64-win64-gcc
         )
         export CROSS="$FFBUILD_CROSS_PREFIX"
     elif [[ $TARGET == linux64 ]]; then

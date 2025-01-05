@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://github.com/xqq/libaribcaption.git"
-SCRIPT_COMMIT="0a3a209d3f0b3650b92941248b9701bf69584a1f"
+SCRIPT_COMMIT="27cf3cab26084d636905335d92c375ecbc3633ea"
 
 ffbuild_enabled() {
     [[ $ADDINS_STR == *4.4* ]] && return -1
@@ -13,10 +13,6 @@ ffbuild_enabled() {
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
-
-    sed -i 's#"-l\.\*#"(-l|/).*#' cmake/GeneratePkgConfig.cmake
-
     mkdir build
     cd build
 

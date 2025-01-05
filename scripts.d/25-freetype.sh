@@ -1,15 +1,13 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://gitlab.freedesktop.org/freetype/freetype.git"
-SCRIPT_COMMIT="a0e10a87f5d4f5e2cb9774f3f20ef3c8bd6b81b3"
+SCRIPT_COMMIT="38272bf85341348eb0a5162ba4e1c95d370f9bce"
 
 ffbuild_enabled() {
     return 0
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
-
     ./autogen.sh
 
     local myconf=(

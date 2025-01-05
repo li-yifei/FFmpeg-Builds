@@ -7,16 +7,15 @@ ffbuild_enabled() {
     [[ $VARIANT == lgpl* ]] && return -1
     [[ $TARGET == win32 ]] && return -1
     # xavs2 aarch64 support is broken
-    [[ $TARGET == linuxarm64 ]] && return -1
+    [[ $TARGET == *arm64 ]] && return -1
     return 0
 }
 
 ffbuild_dockerdl() {
-    to_df "RUN git clone \"$SCRIPT_REPO\" \"$SELF\" && git -C \"$SELF\" checkout \"$SCRIPT_COMMIT\""
+    echo "git clone \"$SCRIPT_REPO\" . && git checkout \"$SCRIPT_COMMIT\""
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
     cd build/linux
 
     local myconf=(
@@ -30,6 +29,7 @@ ffbuild_dockerbuild() {
         --disable-gpac
         --disable-lsmash
         --extra-asflags="-w-macro-params-legacy"
+        --extra-cflags="-Wno-error=incompatible-pointer-types"
         --prefix="$FFBUILD_PREFIX"
     )
 
